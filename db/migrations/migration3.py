@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 
-from pysqlcipher import dbapi2 as sqlite
 import sys
 
-from node import constants
+from pysqlcipher import dbapi2 as sqlite
 
-DB_PATH = constants.DB_PATH
+from node import constants
 
 
 def upgrade(db_path):
@@ -43,10 +42,10 @@ def downgrade(db_path):
         con.commit()
 
 if __name__ == "__main__":
-
+    db_path = constants.DB_PATH
     if sys.argv[1:] is not None:
-        DB_PATH = sys.argv[1:][0]
+        db_path = sys.argv[1:][0]
         if sys.argv[2:] is "downgrade":
-            downgrade(DB_PATH)
+            downgrade(db_path)
         else:
-            upgrade(DB_PATH)
+            upgrade(db_path)
