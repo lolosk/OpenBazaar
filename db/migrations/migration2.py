@@ -1,17 +1,14 @@
 #!/usr/bin/env python
 
-from pysqlcipher import dbapi2 as sqlite
 import sys
+
+from pysqlcipher import dbapi2 as sqlite
 
 from node import constants
 
-DB_PATH = constants.DB_PATH
-
 
 def upgrade(db_path):
-
-    con = sqlite.connect(db_path)
-    with con:
+    with sqlite.connect(db_path) as con:
         cur = con.cursor()
 
         # Use PRAGMA key to encrypt / decrypt database.
@@ -27,9 +24,7 @@ def upgrade(db_path):
 
 
 def downgrade(db_path):
-
-    con = sqlite.connect(db_path)
-    with con:
+    with sqlite.connect(db_path) as con:
         cur = con.cursor()
 
         # Use PRAGMA key to encrypt / decrypt database.
@@ -40,11 +35,15 @@ def downgrade(db_path):
         print 'Downgraded'
         con.commit()
 
-if __name__ == "__main__":
 
-    if sys.argv[1:] is not None:
-        DB_PATH = sys.argv[1:][0]
-        if sys.argv[2:] is "downgrade":
-            downgrade(DB_PATH)
+def main():
+    db_path = constants.DB_PATH
+    if len(sys.argv) > 2:
+        db_path = sys.argv[1]
+        if sys.argv[2] == "downgrade":
+            downgrade(db_path)
         else:
-            upgrade(DB_PATH)
+            upgrade(db_path)
+
+if __name__ == "__main__":
+    main()
